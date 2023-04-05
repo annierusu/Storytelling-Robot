@@ -1,0 +1,8 @@
+prefix=/home/student/catkin_ws/devel
+
+Name: flexbe_navigation_states
+Description: Description of flexbe_navigation_states
+Version: 1.0.0
+Cflags: -I/home/student/catkin_ws/src/generic_flexbe_states/flexbe_navigation_states/src
+Libs: -L${prefix}/lib -lflexbe_navigation_states
+Requires: 

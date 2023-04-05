@@ -1,0 +1,2 @@
+set(qt_gesture_controller_MESSAGE_FILES "")
+set(qt_gesture_controller_SERVICE_FILES "/home/student/catkin_ws/src/headers/qt_gesture_controller/srv/gesture_record.srv;/home/student/catkin_ws/src/headers/qt_gesture_controller/srv/gesture_save.srv;/home/student/catkin_ws/src/headers/qt_gesture_controller/srv/gesture_stop.srv;/home/student/catkin_ws/src/headers/qt_gesture_controller/srv/gesture_play.srv;/home/student/catkin_ws/src/headers/qt_gesture_controller/srv/gesture_list.srv")

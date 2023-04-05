@@ -1,0 +1,10 @@
+(cl:defpackage qt_vosk_app-srv
+  (:use )
+  (:export
+   "SPEECH_RECOGNIZE"
+   "<SPEECH_RECOGNIZE-REQUEST>"
+   "SPEECH_RECOGNIZE-REQUEST"
+   "<SPEECH_RECOGNIZE-RESPONSE>"
+   "SPEECH_RECOGNIZE-RESPONSE"
+  ))
+

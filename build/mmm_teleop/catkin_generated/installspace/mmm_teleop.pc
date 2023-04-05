@@ -1,0 +1,8 @@
+prefix=/home/student/catkin_ws/install
+
+Name: mmm_teleop
+Description: Description of mmm_teleop
+Version: 0.0.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: 

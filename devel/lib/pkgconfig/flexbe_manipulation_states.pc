@@ -1,0 +1,8 @@
+prefix=/home/student/catkin_ws/devel
+
+Name: flexbe_manipulation_states
+Description: Description of flexbe_manipulation_states
+Version: 1.0.0
+Cflags: -I/home/student/catkin_ws/src/generic_flexbe_states/flexbe_manipulation_states/src
+Libs: -L${prefix}/lib -lflexbe_manipulation_states
+Requires: 

@@ -1,0 +1,8 @@
+prefix=/home/student/catkin_ws/devel
+
+Name: qt_robot_interface
+Description: Description of qt_robot_interface
+Version: 1.1.5
+Cflags: -I/home/student/catkin_ws/devel/include
+Libs: -L${prefix}/lib -lqt_robot_interface -lstd_msgs -lmessage_runtime
+Requires: 

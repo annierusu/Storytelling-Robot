@@ -1,0 +1,8 @@
+prefix=/home/student/catkin_ws/install
+
+Name: flexbe_utility_states
+Description: Description of flexbe_utility_states
+Version: 1.0.0
+Cflags: -I${prefix}/include
+Libs: -L${prefix}/lib -lflexbe_utility_states
+Requires: 

@@ -1,0 +1,8 @@
+prefix=/home/student/catkin_ws/install
+
+Name: flexbe_app
+Description: Description of flexbe_app
+Version: 2.3.0
+Cflags: -I${prefix}/include
+Libs: -L${prefix}/lib -lflexbe_app
+Requires: 

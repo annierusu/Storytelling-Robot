@@ -1,0 +1,8 @@
+prefix=/home/student/catkin_ws/devel
+
+Name: testRepo_flexbe_states
+Description: Description of testRepo_flexbe_states
+Version: 1.0.0
+Cflags: -I/home/student/catkin_ws/src/testRepo_behaviors/testRepo_flexbe_states/src
+Libs: -L${prefix}/lib -ltestRepo_flexbe_states
+Requires: 

@@ -1,0 +1,8 @@
+prefix=/home/student/catkin_ws/install
+
+Name: qt_motors_controller
+Description: Description of qt_motors_controller
+Version: 1.1.2
+Cflags: -I${prefix}/include
+Libs: -L${prefix}/lib -lqt_motors_controller -lstd_msgs -lmessage_runtime
+Requires: 

@@ -1,0 +1,7 @@
+set(testRepo_flexbe_behaviors_SETUP_PY_SETUP_MODULE "distutils.core")
+set(testRepo_flexbe_behaviors_SETUP_PY_VERSION "1.0.0")
+set(testRepo_flexbe_behaviors_SETUP_PY_SCRIPTS "")
+set(testRepo_flexbe_behaviors_SETUP_PY_PACKAGES "testRepo_flexbe_behaviors")
+set(testRepo_flexbe_behaviors_SETUP_PY_PACKAGE_DIRS "src/testRepo_flexbe_behaviors")
+set(testRepo_flexbe_behaviors_SETUP_PY_MODULES "")
+set(testRepo_flexbe_behaviors_SETUP_PY_MODULE_DIRS "")

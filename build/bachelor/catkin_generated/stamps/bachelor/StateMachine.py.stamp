@@ -1,0 +1,64 @@
+#!/usr/bin/env python
+
+from distutils.util import execute
+from unicodedata import name
+import smach
+import smach_ros
+import rospy
+import keyboard
+
+#define state Greetings
+class Greetings(smach.State):
+    def __init__(self):
+        smach.State.__init__(self, outcomes=['nextContent'])
+
+    def execute(self, userdata):
+        rospy.loginfo('Executing state Greetings')
+        keyboard.wait("a")
+        return 'nextContent'
+        
+#define state Storytelling
+class Storytelling(smach.State):
+    def __init__(self):
+        smach.State.__init__(self, outcomes=['nextGoodbye'])
+
+    def execute(self, userdata):
+        rospy.loginfo('Executing state Storytelling')
+        keyboard.wait("b")
+        return 'nextGoodbye'
+
+#define state Goodbye
+class Goodbye(smach.State):
+    def __init__(self):
+        smach.State.__init__(self, outcomes=['startAgain'])
+
+    def execute(self, userdata):
+        rospy.loginfo('Executing state Goodbye')
+        keyboard.wait("c")
+        return 'startAgain'
+
+
+def main():
+    rospy.init_node('smach_example_state_machine')
+
+    #create a smach state machine
+    sm = smach.StateMachine(outcomes=[])
+
+    #open the container
+    with sm:
+        #Add states to the container
+        smach.StateMachine.add('GREETINGS', Greetings(), transitions={
+            'nextContent':'STORYTELLING',
+        })
+        smach.StateMachine.add('STORYTELLING', Storytelling(), transitions={
+            'nextGoodbye':'GOODBYE'
+        })
+        smach.StateMachine.add('GOODBYE', Goodbye(), transitions={
+            'startAgain':'GREETINGS'
+        })
+
+    #Execute smach plan
+    outcome = sm.execute()
+
+if __name__ == '__main__':
+    main()

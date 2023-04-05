@@ -1,0 +1,2 @@
+bachelor:headers/qt_gesture_controller:headers/qt_motors_controller:headers/qt_nuitrack_app:headers/qt_robot_interface:headers/qt_vosk_app
+-DCATKIN_DEVEL_PREFIX=/home/student/catkin_ws/devel -DCMAKE_INSTALL_PREFIX=/home/student/catkin_ws/install -G Unix Makefiles

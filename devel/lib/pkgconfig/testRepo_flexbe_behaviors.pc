@@ -1,0 +1,8 @@
+prefix=/home/student/catkin_ws/devel
+
+Name: testRepo_flexbe_behaviors
+Description: Description of testRepo_flexbe_behaviors
+Version: 1.0.0
+Cflags: 
+Libs: -L${prefix}/lib -ltestRepo_flexbe_behaviors
+Requires: 
