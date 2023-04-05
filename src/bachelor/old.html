@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <link rel="stylesheet" href="https://pyscript.net/latest/pyscript.css" />
+  <script defer src="https://pyscript.net/latest/pyscript.js"></script>
+  
+  <title>QT Robot Story Generator</title>
+  
+  <style type="text/css" media="screen">
+    body {font-family:verdana, sans-serif; color:#666; background:#fafafa; padding:20px; text-align:center;}
+    #page {text-align:left; max-width:600px; margin: auto;} 
+    h1 {font-size:16px; font-weight:normal; text-align:center;}
+    label {font-size:16px;}
+    label i {font-style:normal; display:inline-block; text-align:center; width:600px;}
+    button {margin-left:105px; padding:5px; margin-top:5px; font-size:16px;}
+    textarea {width:400px; font-size:16px; font-family: courier, "courier new", monospace; margin:0 0 5px 0; padding:5px; border:1px solid #eee;}
+    select {margin:0 0 5px 0;}
+    @media (min-width:300px) and (max-width: 768px) {
+      input, textarea {width:100%;}
+      label i {display:block; width:auto; text-align:left;}
+      button {display:block; margin:0;}
+    }
+  </style>
+  
+  <script type="text/javascript">
+
+    function saveFormAsTextFile(nameOfFile = "prompt.txt", content = 'content')
+        // Based on https://thiscouldbebetter.wordpress.com/2012/12/18/loading-editing-and-saving-a-text-file-in-html5-using-javascrip/
+        {
+        var textToSave = document.getElementById(content).value // =content;
+          
+        var fileNameToSaveAs = nameOfFile;
+
+        var textToSaveAsBlob = new Blob([textToSave], {type:"text/plain"});
+        var textToSaveAsURL = window.URL.createObjectURL(textToSaveAsBlob);
+      
+        var downloadLink = document.createElement("a");
+        downloadLink.download = fileNameToSaveAs;
+        downloadLink.innerHTML = "Download File";
+        downloadLink.href = textToSaveAsURL;
+        downloadLink.onclick = destroyClickedElement;
+        downloadLink.style.display = "none";
+        document.body.appendChild(downloadLink);
+
+        downloadLink.click();
+        }
+
+    function destroyClickedElement(event)
+        {
+        document.body.removeChild(event.target);
+        }
+
+    function saveRadioButtonResponse(){
+      var radioButtonResponse = document.getElementsByName('ai')
+
+      for (var i = 0, length = radioButtonResponse.length; i < length; i++) {
+        if (radioButtonResponse[i].checked) {
+          var response = radioButtonResponse[i].value
+          saveFormAsTextFile("ai.txt", 'ai' + response)
+          break;
+        }
+      }
+    }
+    function returnPrompt(){
+      return document.getElementById('content').value
+    }
+
+  </script>
+</head>
+
+<body>
+  <div id="page">
+    
+    <h1>QT Robot Story Generator!</h1>
+
+    <br>
+    <div align="center">
+      <label for="ai">
+      <i>1. How much should QT help with the story?</i> <!-- =ai - input example -->
+      <br>
+      <br>
+      <input type="radio" id="ai0" name="ai" value="0">
+      <label for="ai0">No help, my story is directly sent to QT</label><br>
+      <input type="radio" id="ai1" name="ai" value="1">
+      <label for="ai1">Let QT edit my text to make it into a story</label><br>  
+      <input type="radio" id="ai2" name="ai" value="2">
+      <label for="ai2">Let QT make my story on a topic I choose</label><br><br>
+      </label>
+      <br>
+
+      <div align="left">
+      <button py-click="getRadioResponse()" id = "preference_button">
+        Save preference
+      </button>
+      </div>
+      <br>
+      <br>
+
+      
+      <label for="content">
+      <i>2. Input story here:</i>  <!-- =content textarea example -->
+      <textarea id="content" cols="40" rows="10" placeholder="Write a story about..."></textarea>
+      </label>
+    </div>
+
+    <br>
+    
+    <button onclick="saveFormAsTextFile()">
+      Save to File
+    </button>
+    </div>
+
+    <button py-click="test_python()" id="test_button">
+      test python
+    </button>
+
+    <py-script> 
+      from js import document
+
+      def getRadioResponse(): 
+        radioResponse = document.querySelector("[name='ai']:checked").value
+        print(radioResponse)
+        with open("test_file.txt", 'w') as f:
+          f.write(radioResponse)
+
+
+      def test_python():
+        print("hello from test")
+
+    </py-script>
+ 
+</body>
+</html>
