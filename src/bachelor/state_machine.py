@@ -26,7 +26,7 @@ import webbrowser
 
 global_data = None
 global_data_received = False
-local_data = None
+local_data = None #data stored from response from server
 lock = threading.Lock()
 t = None
 
@@ -44,7 +44,7 @@ state = ['Greetings', 'Storytelling', 'Evaluation', 'Goodbye']
 chosen_language = -1
 language = ''
 next_global_state = ''
-name = 'X'
+
 
 #outputs from the web module
 questions = []
@@ -131,18 +131,14 @@ class Greetings(smach.State):
         smach.State.__init__(self, outcomes=['nextContent'])
 
     def execute(self, userdata):
-        global name
-        first_question = "Please write your name here :" #convert to website, do we really need?
-        translation(first_question, False)
-        name = input()
-        try:
-            greetings = "Hi!"
-            #greetings = "Hello {} ! My name is Q T and we are going to learn new things today. Follow the instructions written on the screen !".format(name)
+        
+        try: #TODO: is the try except necessary?
+            greetings = "Hi! My name is Q T and we are going to learn new things today, are you ready to go on an adventure?"
             translation(greetings, True)
         except rospy.ROSInterruptException:
             pass
 
-        instruction = 'Press SHIFT to start the course' #convert to website
+        instruction = 'Press SHIFT to continue' 
         translation(instruction, False)
 
         global next_global_state
@@ -161,41 +157,34 @@ class Storytelling(smach.State):
     def execute(self, userdata):
         global speechSay_pub
         global next_global_state
-        #global local_data
+        global local_data
+        
+        #TODO: write instructions for the user in the website (what each key does for sm)
+        #Here the user has time to fill out the story generation form 
+        local_data = await_response()
+        print("LOCAL DATA RECIEVED: ", local_data)
 
-        global global_data
-        print("Storytelling")
-        #self.get_server_answer()
-        ai_level = 0#local_data.split("|")[0]
-        story_prompt = "hello world"#local_data.split("|")[1]
-        content = story_prompt
+        inputs = local_data.split("|")
 
-        #wait for the server to send the data
-        help = await_response()
-        print(help)
-
-        #TODO: stupid -> figure it out
+        ai_level = inputs[0]
+        story_prompt = inputs[1]
 
         if(ai_level == 1):
-            content = "Make the following text into a story: " + story_prompt
+            story_prompt = "Make the following text into a story: " + story_prompt 
         elif(ai_level == 2):
-            content = "Write a story about " + story_prompt + ", taking it step by step."
-        content = ai.generate_fake_response(content)
+            story_prompt = "Write a story about " + story_prompt + ", taking it step by step."
+        
+        story = ai.generate_fake_response(story_prompt)
 
+        sentences_with_sentiment = classifier.classify(story, AUTO_SPLIT)
 
-        with open('story2', 'r') as st:
-            content = st.read()
-            sentences_with_sentiment = classifier.classify(content, AUTO_SPLIT)
+        print("SENTENCES WITH SENTIMENT: ", sentences_with_sentiment)
 
-            last_sentiment = ()
-
-            for sentence in sentences_with_sentiment:
-                s = sentiment(sentences_with_sentiment[sentence])
-
-                last_sentiment = s
-                robot.showEmotion(s)
-                robot.playGesture(s)
-                translation(sentence, True)
+        for sentence in sentences_with_sentiment:
+            s = sentiment(sentences_with_sentiment[sentence])
+            robot.showEmotion(s)
+            robot.playGesture(s)
+            translation(sentence, True) #TODO: check if translation is properly sequential in robot
 
         print('\n-----------------\n')
         translation('press SHIFT to go to evaluation', False)
@@ -234,7 +223,7 @@ class Evaluation(smach.State):
         #open file containing questions and separate them (each question is on a new line)
         questions = open("questions1").read().splitlines() 
         
-        translation('It is time for your evaluation! How well did you understand the story? Press the down arrow key for the next question', True)
+        translation('Now that we have finished the story, it is time for your evaluation! How well did you understand the story?', True)
 
         #keys being pressed  
 
@@ -258,7 +247,7 @@ class Goodbye(smach.State):
 
     def execute(self, userdata):
         global speechSay_pub
-        translation('Thank you for your attention {}. See you next time!'.format(name), True)
+        translation('Thank you for your attention. See you next time!', True)
         return 'finishState'
 
 def await_response():
@@ -271,8 +260,9 @@ def await_response():
         if global_data_received:
             print("data received")
             global_data_received = False
+            temp = global_data
             lock.release()
-            return global_data
+            return temp
         lock.release()
         time.sleep(0.1)
 
@@ -305,6 +295,7 @@ def start_web_module():
     global t
     t = Thread(target=run_server, args=(main_callback,))
     t.start()
+    
 
 
 def main():

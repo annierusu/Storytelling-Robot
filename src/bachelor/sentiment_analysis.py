@@ -22,6 +22,7 @@ class Classifier:
 
   def classify(self, text, auto_split):
     if auto_split == True:
+      print("Splitting text into sentences...")
       splitted = self.splitIntoSentences(text)
     else:
       splitted = text
@@ -30,7 +31,7 @@ class Classifier:
 
     for sentence in splitted:
       emotions_list = self.sortByScore(self.model(sentence)[0])
-      #Now we have a dictionnary with sentences and the related sentiments sorted
+      #Now we have a dictionary with sentences and the related sentiments sorted
 
       total = 0
       index = 0
@@ -76,8 +77,8 @@ class Classifier:
     sentences = text.split(".")
     sentences_final = []
     for elem in sentences:
-      elem = elem + "."
-      elem = elem.strip()
+      elem = elem + "." #TODO: do we really need the format for the robot? 
+      elem = elem.strip() #delete trailing spaces 
       sentences_final.append(elem)
-    del sentences_final[-1]
+    #del sentences_final[-1]
     return sentences_final
