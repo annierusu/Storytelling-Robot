@@ -14,12 +14,28 @@ from sentiment_analysis import Classifier, sentiment
 from robot_interaction import Robot
 import os 
 from pathlib import Path
-#from mock_robot_interaction import Mock_Robot
+from mock_robot_interaction import Mock_Robot
+import asyncio
+import websockets
+import threading
+from threading import Thread
+import time
+import functools
+import webbrowser
+
+
+global_data = None
+global_data_received = False
+local_data = None
+lock = threading.Lock()
+t = None
+
 
 #for the sentiment classifier
 AUTO_SPLIT = True 
 classifier = Classifier()
-robot = Robot(); #Mock_Robot()
+#NO ROBOT SUPPORT: Mock_Robot() 
+robot = Mock_Robot() #Mock_Robot()
 
 #For the gestures
 stateIndex = 0
@@ -30,8 +46,13 @@ language = ''
 next_global_state = ''
 name = 'X'
 
+#outputs from the web module
+questions = []
+story = ''
+level_ai = ''
+
 while chosen_language != 0 and chosen_language != 1 and chosen_language != 2:
-    print("\nPlease choose your preferred language:\nType 0 for english\nType 1 for german\nType 2 for french\n") #convert to website 
+    print("\nPlease choose your preferred language:\nType 0 for english\nType 1 for german\nType 2 for french\n") 
     chosen_language = int(input())
 
 
@@ -63,38 +84,32 @@ def key_transition(key):
         elif key == Key.esc: #Goodbye
             next_global_state = 'nextGoodbye'
             stateIndex = 3
+        
 
 #For the keyboard
 ls = Listener(on_press = key_transition)
 ls.start()
 
-#initiate node
+
+#initiate node #TODO: i think delete?
 #rospy.init_node('smach_example_state_machine')
 
-#Create service to change the language
-speechConfig = rospy.ServiceProxy('/qt_robot/speech/config', speech_config)
-rospy.wait_for_service('/qt_robot/speech/config')
+#Create service to change the language 
+#NO ROBOT SUPPORT: comment the two lines below
+#speechConfig = rospy.ServiceProxy('/qt_robot/speech/config', speech_config)
+#rospy.wait_for_service('/qt_robot/speech/config')
 
 if chosen_language == 1:
     language = 'de'
-    status = speechConfig("de-DE",0,100)
+    #status = speechConfig("de-DE",0,100) #NO ROBOT SUPPORT: comment this line
 elif chosen_language == 2:
     language = 'fr'
-    status = speechConfig("fr-FR",0,100)
+    #status = speechConfig("fr-FR",0,100) #NO ROBOT SUPPORT: comment this line
 elif chosen_language == 0: 
     language = 'en'
-    status = speechConfig("en-US",0,100)
-    
-#Create publisher for the speeches
-#speechSay_pub = rospy.Publisher('/qt_robot/speech/say', String, queue_size=10)
-#speechSay_pub = rospy.Publisher('/qt_robot/behavior/talkText', String, queue_size = 10)
-#wtime_begin = rospy.get_time()
-#while (speechSay_pub.get_num_connections() == 0 ):
-    #rospy.loginfo("waiting for subscriber connections")
- #   if rospy.get_time() - wtime_begin > 5.0:
-  #      rospy.logerr("Timeout while waiting for subscribers connection!")
-  #      sys.exit()
-   # rospy.sleep(1)
+    #status = speechConfig("en-US",0,100) #NO ROBOT SUPPORT: comment this line
+
+
 
 #translate the given message to the language chosen by the user at the start, specifying if QT will say it or not
 def translation(message, to_Say):
@@ -102,12 +117,10 @@ def translation(message, to_Say):
         content = ts.google(message, from_language='en', to_language=language) 
         print(content, "\n")
         if to_Say :
-           #speechSay_pub.publish(content)
-           robot.say_serv_lips(message)
+           robot.say_serv_lips(message) 
     else:
         print(message, "\n")
         if to_Say: 
-            #speechSay_pub.publish(message)
             robot.say_serv_lips(message)
 
 
@@ -143,29 +156,31 @@ class Greetings(smach.State):
 class Storytelling(smach.State):
     def __init__(self):
         smach.State.__init__(self, outcomes=['nextGoodbye', 'nextEvaluation', 'repeatStory'])
-
-    def execute(self, userdata):
         
-        #Read the story
+        
+    def execute(self, userdata):
         global speechSay_pub
         global next_global_state
+        #global local_data
 
-        #add line to prompt user to write story in website, dictate level of ai etc. 
-        
-        path = str(os.path.join(Path.home(), "Downloads/ai.txt"))
- 
-        with open(path,"r") as f:
-            print(f.read())
-        ai_level = 0 #0: no ai, 1: ai fix, 2: full ai
+        global global_data
+        print("Storytelling")
+        #self.get_server_answer()
+        ai_level = 0#local_data.split("|")[0]
+        story_prompt = "hello world"#local_data.split("|")[1]
+        content = story_prompt
 
-        with open('story1', 'r') as f: #will be just story
-            content = f.read()
-            if(ai_level == 1):
-                content = "Make the following text into a story: " + content
-            elif(ai_level == 1):
-                content = "Write a story about " + content + ", taking it step by step."
-            translation(ai.generate_fake_response(content), True)
+        #wait for the server to send the data
+        help = await_response()
+        print(help)
 
+        #TODO: stupid -> figure it out
+
+        if(ai_level == 1):
+            content = "Make the following text into a story: " + story_prompt
+        elif(ai_level == 2):
+            content = "Write a story about " + story_prompt + ", taking it step by step."
+        content = ai.generate_fake_response(content)
 
 
         with open('story2', 'r') as st:
@@ -193,13 +208,14 @@ class Storytelling(smach.State):
             pass 
         return next_global_state
 
-questions = ''
+
 
 def next_q(key):
-    if(key == Key.down):
-        if(len(questions)>0):
-            translation(questions[0])
-            questions.pop(0)
+    # if(key == Key.down):
+    #     if(len(questions)>0):
+    #         translation(questions[0])
+    #         questions.pop(0)
+    print("down arrow pressed")
 
 
 #define state Evaluation
@@ -241,11 +257,55 @@ class Goodbye(smach.State):
         smach.State.__init__(self, outcomes=['finishState'])
 
     def execute(self, userdata):
-        global name
         global speechSay_pub
         translation('Thank you for your attention {}. See you next time!'.format(name), True)
         return 'finishState'
-        
+
+def await_response():
+    global lock
+    global global_data
+    global global_data_received
+
+    while True: 
+        lock.acquire()
+        if global_data_received:
+            print("data received")
+            global_data_received = False
+            lock.release()
+            return global_data
+        lock.release()
+        time.sleep(0.1)
+
+async def handler(websocket, path, callback):
+    data = await websocket.recv()
+    if(data == "close"):
+        await websocket.close()
+        exit(0)
+    callback(data)
+
+def main_callback(data):
+    global lock
+    global global_data
+    global global_data_received
+    lock.acquire()
+    global_data_received = True
+    global_data = data
+    lock.release()
+
+def run_server(callback):
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+    loop1 = asyncio.get_event_loop()
+    start_server = websockets.serve(functools.partial(handler, callback=callback), "localhost", 10000)
+    loop1.run_until_complete(start_server)
+    loop1.run_forever()
+
+
+def start_web_module():
+    global t
+    t = Thread(target=run_server, args=(main_callback,))
+    t.start()
+
 
 def main():
 
@@ -271,10 +331,13 @@ def main():
         smach.StateMachine.add('GOODBYE', Goodbye(), transitions={
             'finishState': 'outcome4'
         })
-        
 
     #Execute smach plan
+    start_web_module()
     outcome = sm.execute()
+    t.join()
     
 if __name__ == '__main__':
     main()
+
+
