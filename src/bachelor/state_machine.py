@@ -48,6 +48,7 @@ next_global_state = ''
 
 #outputs from the web module
 questions = []
+done_questions = None
 story = ''
 level_ai = ''
 
@@ -198,15 +199,15 @@ class Storytelling(smach.State):
         return next_global_state
 
 
-
 def next_q(key):
-    # if(key == Key.down):
-    #     if(len(questions)>0):
-    #         translation(questions[0])
-    #         questions.pop(0)
-    print("down arrow pressed")
-
-
+    global questions
+    global done_questions
+    if(key == Key.down):
+        if(len(questions) > 0):
+            translation(questions[0], True)
+            questions.pop(0)
+            print("QUESTIONS LEFT: ", questions)
+            
 #define state Evaluation
 class Evaluation(smach.State):
     def __init__(self):
@@ -217,17 +218,21 @@ class Evaluation(smach.State):
         global next_global_state
         global next_question
         global questions
+        global local_data
         q_ls = Listener(on_press = next_q)
         q_ls.start()
-
-        #open file containing questions and separate them (each question is on a new line)
-        questions = open("questions1").read().splitlines() 
         
         translation('Now that we have finished the story, it is time for your evaluation! How well did you understand the story?', True)
 
-        #keys being pressed  
+        questions = local_data.split("|")[2].splitlines()
+        if questions:
+            
+            print(questions)
 
-        translation('Thank you for completing the evaluation !', True)
+            while len(questions)>0: #wait for all questions to be said and discussed
+                pass
+
+        translation('Thank you for answering my questions!', True)
 
         print('\n-----------------\n')
         translation('Do you want to hear another story ?', True)
@@ -247,7 +252,7 @@ class Goodbye(smach.State):
 
     def execute(self, userdata):
         global speechSay_pub
-        translation('Thank you for your attention. See you next time!', True)
+        translation('Thank you for your attention. I hope you learned a lot. See you next time!', True)
         return 'finishState'
 
 def await_response():

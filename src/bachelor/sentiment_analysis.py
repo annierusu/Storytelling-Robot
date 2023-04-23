@@ -80,5 +80,6 @@ class Classifier:
       elem = elem + "." #TODO: do we really need the format for the robot? 
       elem = elem.strip() #delete trailing spaces 
       sentences_final.append(elem)
-    #del sentences_final[-1]
+    if sentences_final[-1] == ".": #last sentence of input ends on a .
+      del sentences_final[-1]
     return sentences_final
