@@ -21,7 +21,7 @@ def generate_response(prompt, system_message = "You are a helpful and friendly a
 
 #for debugging (so we dont have to access the API every time)
 def generate_fake_response(prompt):
-    return "your prompt was : " + prompt
+    return prompt
 
 if __name__ == '__main__':
     print(generate_response("write a story understandable for a 5 year old about how floods are caused, in 5 sentences or less."))

@@ -19,7 +19,6 @@
 		::placeholder {color:#d4d2d2;}
 		
 	</style>
- 
 </head>
  
 <body>
@@ -81,20 +80,15 @@ Question 3
 
 	</form>
 	<br>
-	<button type="submit" onclick="sendStoryData()">submit</button>
-	<button onclick = "document.getElementById('story-form').reset();">Reset</button>
+	<button type="submit" onclick="sendStoryData()">Submit</button>
+	<button onclick = "document.getElementById('story-form').reset();">Clear All</button>
     <button onclick="stopServer()">Stop Server</button>
 
 	</div>
 </body>
  
 <script>
-	function showInput() {
-		document.getElementById("story_input").style.display = "block";
-		document.getElementById("language_selector").style.display = "none";
-	}
-    
-
+	
 	const sendLanguageData = () => {
         const socket = new WebSocket('ws://localhost:10000');
         socket.addEventListener('open', function (event) {
