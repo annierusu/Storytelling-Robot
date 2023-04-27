@@ -11,7 +11,6 @@ class Robot:
         rospy.loginfo("story_node started!")
 
         self.speech_pub = rospy.Publisher('/qt_robot/speech/say', String, queue_size=100)
-        self.speech_lips_pub = rospy.Publisher('/qt_robot/behavior/talkText', String, queue_size=100)
         self.gesture_pub = rospy.Publisher('/qt_robot/gesture/play', String, queue_size=100)
         self.emotion_pub = rospy.Publisher('/qt_robot/emotion/show', String, queue_size=100)
 
@@ -60,10 +59,6 @@ class Robot:
     def say(self, text):
         self.speech_pub.publish(text)
         rospy.loginfo("Said: " + text)
-
-    def say_lips(self, text):
-        self.speech_lips_pub.publish(text)
-        rospy.loginfo("Said with lip-sync: " + text)
 
     def say_serv(self, text):
         rospy.loginfo("Speech service saying: " + text)

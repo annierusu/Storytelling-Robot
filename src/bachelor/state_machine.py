@@ -89,25 +89,7 @@ def key_transition(key):
 ls = Listener(on_press = key_transition)
 ls.start()
 
-
-#initiate node #TODO: i think delete?
-#rospy.init_node('smach_example_state_machine')
-
-#Create service to change the language 
-#NO ROBOT SUPPORT: comment the two lines below
-# speechConfig = rospy.ServiceProxy('/qt_robot/speech/config', speech_config)
-# rospy.wait_for_service('/qt_robot/speech/config')
-
-# if chosen_language == 1:
-#     language = 'de'
-#     # status = speechConfig("de-DE",0,100) #NO ROBOT SUPPORT: comment this line
-# elif chosen_language == 2:
-#     language = 'fr'
-#     # status = speechConfig("fr-FR",0,100) #NO ROBOT SUPPORT: comment this line
-# elif chosen_language == 0: 
-#     language = 'en'
-#     # status = speechConfig("en-US",0,100) #NO ROBOT SUPPORT: comment this line
-
+#configure the language of the robot, based on what the user chose in the website
 def config_language():
     global chosen_language
     global language
