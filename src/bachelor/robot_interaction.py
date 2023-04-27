@@ -10,12 +10,14 @@ class Robot:
         rospy.init_node('story_node')
         rospy.loginfo("story_node started!")
 
-        self.speech_pub = rospy.Publisher('/qt_robot/speech/say', String, queue_size=10)
-        self.gesture_pub = rospy.Publisher('/qt_robot/gesture/play', String, queue_size=10)
-        self.emotion_pub = rospy.Publisher('/qt_robot/emotion/show', String, queue_size=10)
+        self.speech_pub = rospy.Publisher('/qt_robot/speech/say', String, queue_size=100)
+        self.speech_lips_pub = rospy.Publisher('/qt_robot/behavior/talkText', String, queue_size=100)
+        self.gesture_pub = rospy.Publisher('/qt_robot/gesture/play', String, queue_size=100)
+        self.emotion_pub = rospy.Publisher('/qt_robot/emotion/show', String, queue_size=100)
 
         self.speech_serv = rospy.ServiceProxy('/qt_robot/speech/say', speech_say)
         self.speech_serv_lips = rospy.ServiceProxy('/qt_robot/behavior/talkText', behavior_talk_text)
+        
         rospy.sleep(3)
         
     
@@ -59,10 +61,14 @@ class Robot:
         self.speech_pub.publish(text)
         rospy.loginfo("Said: " + text)
 
+    def say_lips(self, text):
+        self.speech_lips_pub.publish(text)
+        rospy.loginfo("Said with lip-sync: " + text)
+
     def say_serv(self, text):
         rospy.loginfo("Speech service saying: " + text)
         rospy.wait_for_service('/qt_robot/speech/say') 
-        rospy.wait_for_service('/qt_robot/behavior/talkText') #TODO: is this responsible for duplication??
+        rospy.wait_for_service('/qt_robot/behavior/talkText') 
         self.speech_serv(text)
 
     def say_serv_lips(self, text):
@@ -70,7 +76,3 @@ class Robot:
         rospy.wait_for_service('/qt_robot/behavior/talkText')
         rospy.wait_for_service('/qt_robot/speech/say') 
         self.speech_serv_lips(text)
-
-
-    def getSpeech(self):
-        return self.say_serv_lips

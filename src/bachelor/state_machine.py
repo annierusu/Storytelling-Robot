@@ -149,13 +149,10 @@ class Greetings(smach.State):
         smach.State.__init__(self, outcomes=['nextContent'])
 
     def execute(self, userdata):
-        
-        try: #TODO: is the try except necessary?
-            robot.playGesture(sentiment.JOYFUL)
-            greetings = "Hi! My name is Q T and we are going to learn new things today, are you ready to go on an adventure?"
-            qt_says(greetings)
-        except rospy.ROSInterruptException:
-            pass
+    
+        robot.playGesture(sentiment.JOYFUL)
+        greetings = "Hi! My name is Q T and we are going to learn new things today, are you ready to go on an adventure?"
+        qt_says(greetings)
 
         instruction = 'Press SHIFT to continue' #TODO: change to web
         qt_says(instruction, to_say=False)
@@ -174,7 +171,6 @@ class Storytelling(smach.State):
         
         
     def execute(self, userdata):
-        global speechSay_pub
         global next_global_state
         global local_data
         
@@ -189,7 +185,7 @@ class Storytelling(smach.State):
         story_prompt = inputs[1]
 
         if(ai_level == 1):
-            story_prompt = ai.generate_response("Make the following text into a story: " + story_prompt)
+            story_prompt = ai.generate_response("Make the following text into a story, understandable by a 5 year old, using characters and dialogue: " + story_prompt)
             print()
             print("STORY LEVEL 1:", story_prompt)
             print()
@@ -210,11 +206,12 @@ class Storytelling(smach.State):
             s = sentiment(sentences_with_sentiment[sentence])
             if s == sentiment.NEUTRAL:
                 qt_says(sentence) #speak with lip sync
+                rospy.sleep(0.2)
             else: 
                 robot.showEmotion(s)
                 robot.playGesture(s)
-                qt_says(sentence, speech=robot.say) #speak without lip sync as showing emotion TODO: maybe try using service instead of pub?
-
+                qt_says(sentence, speech=robot.say_serv) #speak without lip sync as showing emotion 
+                rospy.sleep(0.2)
         print('\n-----------------\n')
         qt_says('press SHIFT to go to evaluation', to_say=False)
         qt_says('press ALT to repeat the story', to_say=False)
@@ -243,7 +240,6 @@ class Evaluation(smach.State):
         smach.State.__init__(self, outcomes=['nextStory', 'nextGoodbye'])
 
     def execute(self, userdata):
-        global speechSay_pub
         global next_global_state
         global next_question
         global questions
@@ -282,7 +278,6 @@ class Goodbye(smach.State):
         smach.State.__init__(self, outcomes=['finishState'])
 
     def execute(self, userdata):
-        global speechSay_pub
         robot.showEmotion(sentiment.JOYFUL)
         qt_says('Thank you for your attention! I hope you learned a lot. See you next time!')
         return 'finishState'
