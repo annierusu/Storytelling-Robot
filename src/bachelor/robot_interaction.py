@@ -53,6 +53,8 @@ class Robot:
             self.gesture_pub.publish("QT/emotions/sad")
         elif gesture == sentiment.SURPRISED:
             self.gesture_pub.publish("QT/emotions/surprised")
+        elif gesture == 'QT/hi':
+            self.gesture_pub.publish("QT/hi")
 
         rospy.loginfo("played gesture " + str(gesture))
 

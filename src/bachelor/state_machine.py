@@ -42,7 +42,7 @@ classifier = Classifier()
 robot = Robot() #Robot()
 
 #For the gestures
-stateIndex = 0
+state_index = 0
 state = ['Greetings', 'Storytelling', 'Evaluation', 'Goodbye']
 
 chosen_language = -1
@@ -58,31 +58,31 @@ next_global_state = ''
 #This function is called when a key is pressed and changes the next state of the state machine
 def key_transition(key):
     global next_global_state
-    global stateIndex
+    global state_index
     global state
 
-    if state[stateIndex] == 'Greetings':
+    if state[state_index] == 'Greetings':
         if key == Key.shift: #Go to Storytelling
             next_global_state = 'nextContent'
-            stateIndex = 1
+            state_index = 1
 
-    elif state[stateIndex] == 'Storytelling':
+    elif state[state_index] == 'Storytelling':
         if key== Key.shift: #Go to Evaluation
             next_global_state = 'nextEvaluation'
-            stateIndex = 2
+            state_index = 2
         elif key == Key.alt: #Repeat the story
             next_global_state = 'repeatStory'
         elif key == Key.esc: #Goodbye
             next_global_state = 'nextGoodbye'
-            stateIndex = 3
+            state_index = 3
 
-    elif state[stateIndex] == 'Evaluation':
+    elif state[state_index] == 'Evaluation':
         if key == Key.shift: #Go to another story
             next_global_state = 'nextStory'
-            stateIndex = 1
+            state_index = 1
         elif key == Key.esc: #Goodbye
             next_global_state = 'nextGoodbye'
-            stateIndex = 3
+            state_index = 3
         
 
 #For the keyboard
@@ -131,22 +131,24 @@ class Greetings(smach.State):
         smach.State.__init__(self, outcomes=['nextContent'])
 
     def execute(self, userdata):
-    
-        robot.playGesture(sentiment.JOYFUL)
+        global next_global_state
+        global state_index
+
+        robot.playGesture('QT/hi')
         greetings = "Hi! My name is Q T and we are going to learn new things today, are you ready to go on an adventure?"
         qt_says(greetings)
 
         instruction = 'Press SHIFT to continue' #TODO: change to web
         qt_says(instruction, to_say=False)
 
-        global next_global_state
-        next_global_state = ''
-        while next_global_state == '':
-            pass 
+        #Go to storytelling state
+        next_global_state = 'nextContent'
+        state_index = 1
+        
         return next_global_state
 
 
-#define state Storytelling
+#Storytelling state of the state machine. Here the user has time to fill out the story generation form and QT will recite the story
 class Storytelling(smach.State):
     def __init__(self):
         smach.State.__init__(self, outcomes=['nextGoodbye', 'nextEvaluation', 'repeatStory'])
@@ -177,7 +179,6 @@ class Storytelling(smach.State):
             print("STORY LEVEL 2:", story_prompt)
             print()
 
-        
         #story = ai.generate_fake_response(story_prompt) #debug
 
         sentences_with_sentiment = classifier.classify(story_prompt, AUTO_SPLIT)
@@ -211,9 +212,8 @@ def next_q(key):
     global done_questions
     if(key == Key.down):
         if(len(questions) > 0):
-            qt_says(questions[0])
-            questions.pop(0)
-            #print("QUESTIONS LEFT: ", questions)
+            qt_says(questions.pop(0))
+            print("QUESTIONS LEFT: ", questions)
         else: done_questions = True #we press down arrow, but all the questions have been said already
             
 #define state Evaluation
@@ -227,7 +227,7 @@ class Evaluation(smach.State):
         global questions
         global done_questions
         global local_data
-        
+        questions = []
         q_ls = Listener(on_press = next_q)
         q_ls.start()
         
@@ -243,8 +243,9 @@ class Evaluation(smach.State):
             robot.showEmotion(sentiment.JOYFUL)
             qt_says('Thank you for answering my questions!')
 
-        print('\n-----------------\n')
         qt_says('Do you want to hear another story ?')
+
+        print('\n-----------------\n')
         qt_says('press SHIFT to hear another story', to_say=False)
         qt_says('press ESC to say goodbye', to_say=False)
         print('-----------------\n')
