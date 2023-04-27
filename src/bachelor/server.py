@@ -23,7 +23,7 @@ def run_server(callback):
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
     loop1 = asyncio.get_event_loop()
-    start_server = websockets.serve(functools.partial(handler, callback=callback), "localhost", 8001)
+    start_server = websockets.serve(functools.partial(handler, callback=callback), "localhost", 10000)
     loop1.run_until_complete(start_server)
     print("Server started")
     loop1.run_forever()
@@ -56,7 +56,7 @@ def main():
     t = Thread(target=run_server, args=(main_callback,))
     t.start()
     while True:
-        print(await_response())
+        print(await_response()) #print message from client (webpage)
     t.join()
 
 

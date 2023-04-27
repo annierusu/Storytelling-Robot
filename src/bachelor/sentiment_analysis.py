@@ -1,6 +1,7 @@
 from enum import Enum
 import operator
 import random
+import re
 
 from transformers import pipeline
 
@@ -37,14 +38,12 @@ class Classifier:
       index = 0
       temp = []
 
-      while(total < 0.8):
+      while(total < 0.5): #we want to consider only the most probable emotions, so we take the first ones 
         total += emotions_list[index]['score']
         temp.append(emotions_list[index])
-
         index += 1 
       
       emotions_list = self.normalize(temp)
-
       sentences_with_sentiment[sentence] = self.weightedRandom(emotions_list)[0]
     
     return sentences_with_sentiment
@@ -73,13 +72,41 @@ class Classifier:
   def sortByScore(self, list):
     return sorted(list, key = lambda d: d['score'], reverse=True)
 
+  #split sentences based on punctuation: . ? ! and ...
   def splitIntoSentences(self, text):
-    sentences = text.split(".")
-    sentences_final = []
-    for elem in sentences:
-      elem = elem + "." #TODO: do we really need the format for the robot? 
-      elem = elem.strip() #delete trailing spaces 
-      sentences_final.append(elem)
-    if sentences_final[-1] == ".": #last sentence of input ends on a .
-      del sentences_final[-1]
-    return sentences_final
+    text = re.split(r'(?<!\w\.\w.)(?<![A-Z][a-z]\.)(?<=\.|\?|\!)\s', text)
+    splitted = []
+    for t in text:
+      if t == '': #skip empty lines
+        continue
+      t = t.replace('\n',' ').replace('\t', ' ') #remove any newlines or tabs within a sentence 
+      t = t.replace('  ', ' ') #remove double spaces potentially caused by the previous line
+      t = t.strip() #remove leading and trailing spaces
+      splitted.append(t)
+    return splitted
+
+if __name__ == "__main__":
+  test = "\t\thello there"
+  print("start")
+  print(test.strip())
+  print()
+  text = """Mr. Smith bought cheapsite.com for 1.5 million dollars, i.e. he paid a lot for it. Did he mind! \tDid he mind? Adam Jones Jr. thinks he didn't. In any case, this isn't true...
+
+ Well, with a probability of .9 it isn't. How crazy! Oh well...?"""
+
+  text2 = """Once upon a time, there was a beautiful garden filled with vibrant flowers of all colors and shapes.
+  The flowers were happy, soaking up the sunshine and enjoying the cool breeze that gently blew through the garden.
+
+
+One day, a curious little bee flew into the garden, buzzing around from flower to flower. As she landed on each flower, she noticed that something magical was happening...
+Tiny grains of pollen were sticking to her furry body, and as she flew away, the pollen traveled with her. She said:
+\t"That was some yummy nectar!"
+, as she flew away. The bee didn't realize it yet, but she was helping to pollinate the flowers!
+Pollination is the process by which pollen is transferred from the male part of a flower to the female part of another flower, allowing the flowers to produce seeds and grow into new plants."""
+  classifier = Classifier()
+  sentences = classifier.classify(text2, True)
+  for s in sentences:
+    print(s)
+    print(sentiment(sentences[s]))
+    print()
+    

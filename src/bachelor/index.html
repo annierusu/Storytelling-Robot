@@ -4,7 +4,7 @@
  
 <head>
     <meta charset="utf-8">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 	<title>QT Robot Story Generator</title>
@@ -26,6 +26,23 @@
     <h1>QT Robot Story Generator!</h1>
 	<br>
 	<br>
+	<div id="language_selector" style = "display:block">
+		<label >Pick your language:</label><br>
+	<br>
+
+		<input type="radio" id="en" name="language" value="0">
+    	<label for="en">English</label><br>
+    	<input type="radio" id="fr" name="language" value="1">
+    	<label for="fr">Francais</label><br>  
+    	<input type="radio" id="de" name="language" value="2">
+    	<label for="de">Deutsch</label><br><br>
+		
+		<input type="button" value = "Submit" onclick="sendLanguageData()"/>
+	</div>
+	
+	<br>
+
+	<div id="story_input" style="display:none">
 	<form method="post" id="story-form">
 	
 		<!--Radio buttons for level of ai of the story-->
@@ -60,24 +77,43 @@ you may include any details (characters, locations) you wish!</p>
 Question 2
 Question 3
 ..." ></textarea>
-		<br>
-		<button type="submit" onclick="contactServer()">submit</button>
+		
 
 	</form>
- 
+	<br>
+	<button type="submit" onclick="sendStoryData()">submit</button>
+	<button onclick = "document.getElementById('story-form').reset();">Reset</button>
     <button onclick="stopServer()">Stop Server</button>
+
+	</div>
 </body>
  
 <script>
+	function showInput() {
+		document.getElementById("story_input").style.display = "block";
+		document.getElementById("language_selector").style.display = "none";
+	}
     
-    const contactServer = () => {
+
+	const sendLanguageData = () => {
+        const socket = new WebSocket('ws://localhost:10000');
+        socket.addEventListener('open', function (event) {
+            var language = document.querySelector('input[name="language"]:checked').value;
+            socket.send(language);	
+			document.getElementById("story_input").style.display = "block";
+			document.getElementById("language_selector").style.display = "none";
+            socket.close()
+        });
+    }
+
+    const sendStoryData = () => {
         const socket = new WebSocket('ws://localhost:10000');
         socket.addEventListener('open', function (event) {
             var ai = document.querySelector('input[name="ai"]:checked').value;
             var story = document.getElementById("story").value;
             var questions = document.getElementById("questions").value;
             var message = ai + "|" + story + "|" + questions; 
-            socket.send(message);
+            socket.send(message);	
             socket.close()
         });
     }

@@ -62,7 +62,7 @@ class Robot:
     def say_serv(self, text):
         rospy.loginfo("Speech service saying: " + text)
         rospy.wait_for_service('/qt_robot/speech/say') 
-        rospy.wait_for_service('/qt_robot/behavior/talkText')
+        rospy.wait_for_service('/qt_robot/behavior/talkText') #TODO: is this responsible for duplication??
         self.speech_serv(text)
 
     def say_serv_lips(self, text):
@@ -70,3 +70,7 @@ class Robot:
         rospy.wait_for_service('/qt_robot/behavior/talkText')
         rospy.wait_for_service('/qt_robot/speech/say') 
         self.speech_serv_lips(text)
+
+
+    def getSpeech(self):
+        return self.say_serv_lips

@@ -35,3 +35,6 @@ class Mock_Robot:
         print("Speech service saying with lip-sync: " + text)
         #rospy.wait_for_service('/qt_robot/behavior/talkText')
         #print(text)
+
+    def getSpeech(self):
+        return self.say_serv_lips
