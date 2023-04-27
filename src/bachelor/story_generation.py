@@ -7,6 +7,9 @@ prompt = "In two sentences, can you explain why flowers are different colors?"
 
 #Generates a response given a prompt using OpenAI's GPT-3 API 
 def generate_response(prompt, system_message = "You are a helpful and friendly assistant.", max_tokens = 600, n = 1):
+    print("\nHELLO FROM AI\n")
+    print(prompt)
+    print()
     response = openai.ChatCompletion.create(
         model = MODEL,
         messages =[

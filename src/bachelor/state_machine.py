@@ -39,7 +39,7 @@ AUTO_SPLIT = True
 classifier = Classifier()
 
 #NO ROBOT SUPPORT: Mock_Robot() 
-robot = Mock_Robot() #Robot()
+robot = Robot() #Robot()
 
 #For the gestures
 stateIndex = 0
@@ -111,21 +111,23 @@ ls.start()
 def config_language():
     global chosen_language
     global language
-    # speechConfig = rospy.ServiceProxy('/qt_robot/speech/config', speech_config)
-    # rospy.wait_for_service('/qt_robot/speech/config')
+    #NO ROBOT SUPPORT: comment the two lines below
+    speechConfig = rospy.ServiceProxy('/qt_robot/speech/config', speech_config)
+    rospy.wait_for_service('/qt_robot/speech/config')
+
     chosen_language = int(await_response())
     print("Language chosen: ", chosen_language)
     print(chosen_language==0)
     print()
     if chosen_language == 1:
         language = 'de'
-        # status = speechConfig("de-DE",0,100) #NO ROBOT SUPPORT: comment this line
+        status = speechConfig("de-DE",0,100) #NO ROBOT SUPPORT: comment this line
     elif chosen_language == 2:
         language = 'fr'
-        # status = speechConfig("fr-FR",0,100) #NO ROBOT SUPPORT: comment this line
+        status = speechConfig("fr-FR",0,100) #NO ROBOT SUPPORT: comment this line
     elif chosen_language == 0: 
         language = 'en'
-        # status = speechConfig("en-US",0,100) #NO ROBOT SUPPORT: comment this line
+        status = speechConfig("en-US",0,100) #NO ROBOT SUPPORT: comment this line
     print("Language chosen: ", language)
     print()
 
@@ -183,18 +185,24 @@ class Storytelling(smach.State):
 
         inputs = local_data.split("|")
 
-        ai_level = inputs[0]
+        ai_level = int(inputs[0])
         story_prompt = inputs[1]
 
         if(ai_level == 1):
-            story_prompt = "Make the following text into a story: " + story_prompt 
+            story_prompt = ai.generate_response("Make the following text into a story: " + story_prompt)
+            print()
+            print("STORY LEVEL 1:", story_prompt)
+            print()
         elif(ai_level == 2):
-            story_prompt = "Write a story about " + story_prompt + ", taking it step by step."
-        
-        #story = ai.generate_fake_response(story_prompt)
-        story = ai.generate_fake_response(story_prompt)
+            print()
+            story_prompt = ai.generate_response("Write a story about " + story_prompt + ", understandable by a 5 year old, taking it step by step.")
+            print("STORY LEVEL 2:", story_prompt)
+            print()
 
-        sentences_with_sentiment = classifier.classify(story, AUTO_SPLIT)
+        
+        #story = ai.generate_fake_response(story_prompt) #debug
+
+        sentences_with_sentiment = classifier.classify(story_prompt, AUTO_SPLIT)
 
         #print("SENTENCES WITH SENTIMENT: ", sentences_with_sentiment)
 
