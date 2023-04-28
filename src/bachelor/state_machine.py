@@ -39,7 +39,7 @@ AUTO_SPLIT = True
 classifier = Classifier()
 
 #NO ROBOT SUPPORT: Mock_Robot() 
-robot = Robot() #Robot()
+robot = Mock_Robot() #Robot()
 
 #For the gestures
 state_index = 0
@@ -62,22 +62,22 @@ def key_transition(key):
     global state
 
     if state[state_index] == 'Greetings':
-        if key == Key.shift: #Go to Storytelling
+        if key == Key.right: #Go to Storytelling
             next_global_state = 'nextContent'
             state_index = 1
 
     elif state[state_index] == 'Storytelling':
-        if key== Key.shift: #Go to Evaluation
+        if key== Key.right: #Go to Evaluation
             next_global_state = 'nextEvaluation'
             state_index = 2
-        elif key == Key.alt: #Repeat the story
+        elif key == Key.left: #Repeat the story
             next_global_state = 'repeatStory'
         elif key == Key.esc: #Goodbye
             next_global_state = 'nextGoodbye'
             state_index = 3
 
     elif state[state_index] == 'Evaluation':
-        if key == Key.shift: #Go to another story
+        if key == Key.left: #Go to another story
             next_global_state = 'nextStory'
             state_index = 1
         elif key == Key.esc: #Goodbye
@@ -94,8 +94,8 @@ def config_language():
     global chosen_language
     global language
     #NO ROBOT SUPPORT: comment the two lines below
-    speechConfig = rospy.ServiceProxy('/qt_robot/speech/config', speech_config)
-    rospy.wait_for_service('/qt_robot/speech/config')
+    # speechConfig = rospy.ServiceProxy('/qt_robot/speech/config', speech_config)
+    # rospy.wait_for_service('/qt_robot/speech/config')
 
     chosen_language = int(await_response())
     print("Language chosen: ", chosen_language)
@@ -103,13 +103,13 @@ def config_language():
     print()
     if chosen_language == 1:
         language = 'de'
-        status = speechConfig("de-DE",0,100) #NO ROBOT SUPPORT: comment this line
+        # status = speechConfig("de-DE",0,100) #NO ROBOT SUPPORT: comment this line
     elif chosen_language == 2:
         language = 'fr'
-        status = speechConfig("fr-FR",0,100) #NO ROBOT SUPPORT: comment this line
+        # status = speechConfig("fr-FR",0,100) #NO ROBOT SUPPORT: comment this line
     elif chosen_language == 0: 
         language = 'en'
-        status = speechConfig("en-US",0,100) #NO ROBOT SUPPORT: comment this line
+        # status = speechConfig("en-US",0,100) #NO ROBOT SUPPORT: comment this line
     print("Language chosen: ", language)
     print()
 
@@ -138,8 +138,8 @@ class Greetings(smach.State):
         greetings = "Hi! My name is Q T and we are going to learn new things today, are you ready to go on an adventure?"
         qt_says(greetings)
 
-        instruction = 'Press SHIFT to continue' #TODO: change to web
-        qt_says(instruction, to_say=False)
+        # instruction = 'Press SHIFT to continue' #TODO: change to web
+        # qt_says(instruction, to_say=False)
 
         #Go to storytelling state
         next_global_state = 'nextContent'
@@ -170,14 +170,14 @@ class Storytelling(smach.State):
 
         if(ai_level == 1):
             story_prompt = ai.generate_response("Make the following text into a story, understandable by a 5 year old, using characters and dialogue: " + story_prompt)
-            print()
-            print("STORY LEVEL 1:", story_prompt)
-            print()
+            # print()
+            # print("STORY LEVEL 1:", story_prompt)
+            # print()
         elif(ai_level == 2):
-            print()
-            story_prompt = ai.generate_response("Write a story about " + story_prompt + ", understandable by a 5 year old, taking it step by step.")
-            print("STORY LEVEL 2:", story_prompt)
-            print()
+            story_prompt = ai.generate_response("Write a story about " + story_prompt + ", understandable by a 5 year old, using characters and dialogue, taking it step by step.")
+            # print()
+            # print("STORY LEVEL 2:", story_prompt)
+            # print()
 
         #story = ai.generate_fake_response(story_prompt) #debug
 
@@ -196,8 +196,8 @@ class Storytelling(smach.State):
                 qt_says(sentence, speech=robot.say_serv) #speak without lip sync as showing emotion 
                 rospy.sleep(0.2)
         print('\n-----------------\n')
-        qt_says('press SHIFT to go to evaluation', to_say=False)
-        qt_says('press ALT to repeat the story', to_say=False)
+        qt_says('press RIGHT ARROW to go to evaluation', to_say=False)
+        qt_says('press LEFT ARROW to repeat the story', to_say=False)
         qt_says('press ESC to say goodbye', to_say=False)
         print('-----------------\n')
         
@@ -246,7 +246,7 @@ class Evaluation(smach.State):
         qt_says('Do you want to hear another story ?')
 
         print('\n-----------------\n')
-        qt_says('press SHIFT to hear another story', to_say=False)
+        qt_says('press LEFT ARROW to hear another story', to_say=False)
         qt_says('press ESC to say goodbye', to_say=False)
         print('-----------------\n')
         
@@ -286,7 +286,11 @@ async def handler(websocket, path, callback):
     if(data == "close"):
         await websocket.close()
         exit(0)
+        # loop = asyncio.get_event_loop()
+        # loop.stop()
+        # await loop.close()
     callback(data)
+
 
 def main_callback(data):
     global lock
@@ -305,14 +309,11 @@ def run_server(callback):
     loop1.run_until_complete(start_server)
     loop1.run_forever()
 
-
 def start_web_module():
     global t
     t = Thread(target=run_server, args=(main_callback,))
     t.start()
     
-
-
 def main():
 
     #create a smach state machine
@@ -340,9 +341,9 @@ def main():
 
     #Execute smach plan
     start_web_module()
+    webbrowser.open_new_tab('index.html')
     config_language()
     outcome = sm.execute()
-    
     t.join()
     
 if __name__ == '__main__':

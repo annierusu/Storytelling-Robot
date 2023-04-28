@@ -24,7 +24,6 @@
 <body>
     <h1>QT Robot Story Generator!</h1>
 	<br>
-	<br>
 	<div id="language_selector" style = "display:block">
 		<label >Pick your language:</label><br>
 	<br>
@@ -39,11 +38,12 @@
 		<input type="button" value = "Submit" onclick="sendLanguageData()"/>
 	</div>
 	
-	<br>
 
 	<div id="story_input" style="display:none">
 	<form method="post" id="story-form">
-	
+		<p>Controls:</p><p>RIGHT ARROW: Go to questions </p> <p> LEFT ARROW: New story</p><p> ESC: Finish</p>
+
+	<br>
 		<!--Radio buttons for level of ai of the story-->
 	<label >Step 1: Choose how much you want QT to help you:</label><br>
 	<br>
@@ -54,10 +54,6 @@
     	<label for="ai1">Let QT edit my text to make it into a story</label><br>  
     	<input type="radio" id="ai2" name="ai" value="2">
     	<label for="ai2">Let QT make my story on a topic I choose</label><br><br>
-
-	
-	<p> For the last option, start the prompt with "Write a story about", 
-you may include any details (characters, locations) you wish!</p>
 	
 	<br>
 		<!-- Story or prompt to be inputted-->
@@ -82,7 +78,7 @@ Question 3
 	<br>
 	<button type="submit" onclick="sendStoryData()">Submit</button>
 	<button onclick = "document.getElementById('story-form').reset();">Clear All</button>
-    <button onclick="stopServer()">End Lesson</button>
+    <button onclick="stopServer()">Exit</button>
 
 	</div>
 </body>
@@ -116,9 +112,17 @@ Question 3
         const socket = new WebSocket('ws://localhost:10000');
         socket.addEventListener('open', function (event) {
             socket.send("close");
+			//refresh page
+			//window.location.reload();
+			closeWindow();
             socket.close()
         });
     }
+
+	function closeWindow(){
+		window.open('', '_parent','');
+		window.close();
+	}
  
 </script>
  

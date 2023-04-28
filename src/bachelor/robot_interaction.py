@@ -10,9 +10,9 @@ class Robot:
         rospy.init_node('story_node')
         rospy.loginfo("story_node started!")
 
-        self.speech_pub = rospy.Publisher('/qt_robot/speech/say', String, queue_size=100)
-        self.gesture_pub = rospy.Publisher('/qt_robot/gesture/play', String, queue_size=100)
-        self.emotion_pub = rospy.Publisher('/qt_robot/emotion/show', String, queue_size=100)
+        self.speech_pub = rospy.Publisher('/qt_robot/speech/say', String, queue_size=10)
+        self.gesture_pub = rospy.Publisher('/qt_robot/gesture/play', String, queue_size=20)
+        self.emotion_pub = rospy.Publisher('/qt_robot/emotion/show', String, queue_size=20)
 
         self.speech_serv = rospy.ServiceProxy('/qt_robot/speech/say', speech_say)
         self.speech_serv_lips = rospy.ServiceProxy('/qt_robot/behavior/talkText', behavior_talk_text)
