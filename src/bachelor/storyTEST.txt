@@ -1,0 +1,32 @@
+write a story about how to build a car out of lego WeDo with a motor, understandable by a 5 year old, using characters and dialogue, 
+taking it step by step.
+
+Once upon a time, there was a young boy named Tim who loved building things with his Lego WeDo kit. He decided to build a car with a motor, and asked his dad for help.
+Dad said, "Sure, let's start by building the car's body with the Lego pieces. We need to make sure it's sturdy enough to hold the motor."
+Tim nodded and they began building. After a few minutes, they had a nice car body. Dad added, "Now let's add wheels and attach the motor to the back axle."
+Tim helped attach the wheels and the motor. Dad showed Tim how to connect the motor to the computer with a USB cable, and how to program the car to move forward and backward.
+Finally, they turned on the motor, and the car started moving. Tim was thrilled! He said, "Thanks, Dad! Now we can have a race!"
+Dad smiled and replied, "Yes, we can. But let's make sure we don't crash into anything!"
+Tim and Dad had a lot of fun racing their Lego WeDo car, and they even added some decorations to make it look even cooler. Tim was proud of his creation and couldn't wait to build more things with his Lego WeDo kit.
+
+
+Make the following text into a story, understandable by a 5 year old, using characters and dialogue: How to build a lego car: 
+    Step 1: build the body of the car out of Lego blocks.
+    Step 2: build the wheels.
+    Step 3: attach the wheels to the body of the car. 
+    Step 4: add the motor
+    Step 5: program the motor to make the car move.
+
+
+Once upon a time, there was a little boy named Jack who loved playing with Legos. One day, he decided to build a car out of his Lego blocks.
+Jack asked his mom for help, "Mom, can you help me build a car with Legos?"
+His mom smiled and said, "Of course, let's get started!"
+Jack and his mom sat down and began building. First, they built the body of the car with the Lego blocks. Jack asked, "What's the next step?"
+His mom replied, "Next, we need to build the wheels." They built the wheels and then attached them to the car body.
+Jack was excited to see the car coming together, "It looks like a real car now!"
+His mom added, "Now, let's add the motor to make it move." They added the motor to the car's back axle and connected it to a computer with a USB cable.
+Jack asked, "What's the last step, Mom?"
+His mom replied, "The last step is to program the motor to make the car move." They used a special Lego software to program the car to move forward and backward.
+Finally, they turned on the motor, and the car began to move! Jack was so excited to see his creation come to life. "Wow, it's moving! Thank you, Mom!"
+His mom smiled and replied, "You did a great job, Jack. I'm proud of you!" They spent the rest of the day playing with the Lego car and dreaming up new creations to build.
+

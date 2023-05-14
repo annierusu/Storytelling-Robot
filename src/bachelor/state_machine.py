@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 from pynput.keyboard import Key, Listener
 import sys
@@ -7,7 +7,7 @@ import rospy
 import json
 from std_msgs.msg import String
 from qt_nuitrack_app.msg import Gestures
-import translators as ts
+#import translators as ts
 from qt_robot_interface.srv import *
 import story_generation as ai
 from sentiment_analysis import Classifier, sentiment 
@@ -101,10 +101,10 @@ def config_language():
     print("Language chosen: ", chosen_language)
     print(chosen_language==0)
     print()
-    if chosen_language == 1:
+    if chosen_language == 2:
         language = 'de'
         # status = speechConfig("de-DE",0,100) #NO ROBOT SUPPORT: comment this line
-    elif chosen_language == 2:
+    elif chosen_language == 1:
         language = 'fr'
         # status = speechConfig("fr-FR",0,100) #NO ROBOT SUPPORT: comment this line
     elif chosen_language == 0: 
@@ -116,8 +116,8 @@ def config_language():
 
 #translate the given message to the language chosen by the user at the start, specifying if QT will say it or not
 def qt_says(message, to_say = True, speech=robot.say_serv_lips):
-    if language  != 'en':
-        message = ts.translate_text(message, translator='google', from_language='en', to_language=language) 
+    #if language  != 'en':
+        #message = ts.translate_text(message, translator='google', from_language='en', to_language=language) 
     if to_say :
         speech(message) 
     else:
@@ -138,9 +138,6 @@ class Greetings(smach.State):
         greetings = "Hi! My name is Q T and we are going to learn new things today, are you ready to go on an adventure?"
         qt_says(greetings)
 
-        # instruction = 'Press SHIFT to continue' #TODO: change to web
-        # qt_says(instruction, to_say=False)
-
         #Go to storytelling state
         next_global_state = 'nextContent'
         state_index = 1
@@ -158,28 +155,34 @@ class Storytelling(smach.State):
         global next_global_state
         global local_data
         
-        #TODO: write instructions for the user in the website (what each key does for sm)
         #Here the user has time to fill out the story generation form 
         local_data = await_response()
-        #print("LOCAL DATA RECIEVED: ", local_data)
+        print("LOCAL DATA RECIEVED: ", local_data)
 
         inputs = local_data.split("|")
 
         ai_level = int(inputs[0])
         story_prompt = inputs[1]
+        story_length = int(inputs[3])
+        
 
         if(ai_level == 1):
-            story_prompt = ai.generate_response("Make the following text into a story, understandable by a 5 year old, using characters and dialogue: " + story_prompt)
+            story_prompt = ai.generate_response("Make the following text into a story, understandable by a 5 year old, using characters and dialogue: " + story_prompt, max_tokens=story_length)
             # print()
             # print("STORY LEVEL 1:", story_prompt)
             # print()
         elif(ai_level == 2):
-            story_prompt = ai.generate_response("Write a story about " + story_prompt + ", understandable by a 5 year old, using characters and dialogue, taking it step by step.")
+            story_prompt = ai.generate_response("Write a story about " + story_prompt + ", understandable by a 5 year old, using characters and dialogue, taking it step by step.", max_tokens=story_length)
             # print()
             # print("STORY LEVEL 2:", story_prompt)
             # print()
 
         #story = ai.generate_fake_response(story_prompt) #debug
+
+        #save story to files to have it: 
+
+        # with open("QT_story_{}".format(story_prompt[20:40]), 'w') as f:
+        #     f.write(story_prompt)
 
         sentences_with_sentiment = classifier.classify(story_prompt, AUTO_SPLIT)
 
@@ -347,6 +350,7 @@ def main():
     t.join()
     
 if __name__ == '__main__':
+    print("STARTING QT MODULE")
     main()
 
 

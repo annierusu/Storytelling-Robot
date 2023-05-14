@@ -6,7 +6,7 @@ MODEL = "gpt-3.5-turbo"
 prompt = "In two sentences, can you explain why flowers are different colors?" 
 
 #Generates a response given a prompt using OpenAI's GPT-3 API 
-def generate_response(prompt, system_message = "You are a helpful and friendly assistant.", max_tokens = 600, n = 1):
+def generate_response(prompt, system_message = "You are a helpful and friendly assistant.", max_tokens = 500, n = 1):
     print("\nHELLO FROM AI\n")
     print(prompt)
     print()
@@ -27,4 +27,4 @@ def generate_fake_response(prompt):
     return prompt
 
 if __name__ == '__main__':
-    print(generate_response("write a story understandable for a 5 year old about how floods are caused, in 5 sentences or less."))
+    print(generate_response("pick a number between 1 and 5"))

@@ -17,6 +17,15 @@
 		textarea {width:400px; font-size:16px; font-family: courier, "courier new", monospace; margin:0 0 5px 0; padding:5px; border:1px solid #eee; }
 		select {margin:0 0 5px 0;}
 		::placeholder {color:#d4d2d2;}
+		.slider{
+			width: 400px;
+			height: 30px;
+			background: #d3d3d3;
+			outline: none;
+			opacity: 0.7;
+			-webkit-transition: .2s;
+			transition: opacity .2s;
+		}
 		
 	</style>
 </head>
@@ -41,30 +50,33 @@
 
 	<div id="story_input" style="display:none">
 	<form method="post" id="story-form">
-		<p>Controls:</p><p>RIGHT ARROW: Go to questions </p> <p> LEFT ARROW: New story</p><p> ESC: Finish</p>
-
-	<br>
 		<!--Radio buttons for level of ai of the story-->
 	<label >Step 1: Choose how much you want QT to help you:</label><br>
 	<br>
 
-		<input type="radio" id="ai0" name="ai" value="0">
-    	<label for="ai0">No help, my story is directly sent to QT</label><br>
-    	<input type="radio" id="ai1" name="ai" value="1">
-    	<label for="ai1">Let QT edit my text to make it into a story</label><br>  
-    	<input type="radio" id="ai2" name="ai" value="2">
-    	<label for="ai2">Let QT make my story on a topic I choose</label><br><br>
+		<input type="radio" id="ai0" name="ai" value="0" onclick="hideSlider()">
+    	<label for="ai0">No help, I will write the story for QT to tell.</label><br>
+    	<input type="radio" id="ai1" name="ai" value="1" onclick="showSlider()">
+    	<label for="ai1">I will give an explanation, and QT will edit my text to make it into a story.</label><br>  
+    	<input type="radio" id="ai2" name="ai" value="2" onclick="showSlider()">
+    	<label for="ai2">I will write a topic of my choice, and QT will create the story.</label><br><br>
 	
 	<br>
 		<!-- Story or prompt to be inputted-->
-	<label for="story-form">Step 2: Input story here:</label><br>
+	<label for="story-form">Step 2: Write your text based on the option you chose:</label><br>
 
 		<textarea form="story-form" id="story" cols="40" rows="10" placeholder="Once upon a time..."></textarea>
 		<br>	
 	<br>
+		<div id="story_length_slider" style="display:none">
+			<p>Story length: <span id="length"></span> words</p>
+			<input type="range" min="50" max="600" value="400" class="slider" id="story_length"> 
+		</div>
+
+	<br>
 		
 		<!-- Questions about the story to be inputted-->
-	<label for="'story-form">Step 3: Input questions to be asked by QT (one question per line)</label><br>
+	<label for="'story-form">Step 3: Optionally, write some questions to be asked directly by QT about the story (one question per line)</label><br>
 	
 	<br>
 
@@ -76,15 +88,44 @@ Question 3
 
 	</form>
 	<br>
+	<p>Step 4: Click the Submit button for QT to start telling the story, or the Clear All button to restart</p>
 	<button type="submit" onclick="sendStoryData()">Submit</button>
-	<button onclick = "document.getElementById('story-form').reset();">Clear All</button>
-    <button onclick="stopServer()">Exit</button>
-
+	<button onclick = "clearAll()">Clear All</button>
+	<p>Step 5: Once QT has finished telling the story, <br>
+-Press LEFT ARROW and then the Clear All button to tell a new story (go to Step 1), <br>
+-RIGHT ARROW to go to the questions,<br>
+-ESC and then the Exit button to finish.</p>
+    <p>Step 6: To go through the questions, press DOWN ARROW, until QT says there are no more questions.</p>
+	<p>Step 7: Once the questions are finished, <br>
+-Press LEFT ARROW and then the Clear All button to tell a new story (go to Step 1),	<br>
+-ESC and then the Exit button to finish.
+	</p>
+	<p></p>
+	<button onclick="stopServer()">Exit</button>
 	</div>
 </body>
  
 <script>
-	
+	var slider = document.getElementById("story_length");
+	var output = document.getElementById("length");
+	output.innerHTML = slider.value;
+	slider.oninput = function() {
+		output.innerHTML = this.value;
+	}
+
+	function hideSlider(){
+		document.getElementById("story_length_slider").style.display = "none";
+	}
+	function showSlider(){
+		document.getElementById("story_length_slider").style.display = "block";
+	}
+
+	function clearAll(){
+		document.getElementById('story-form').reset();
+		document.getElementById("length").innerHTML = 400;
+		hideSlider();
+	}
+
 	const sendLanguageData = () => {
         const socket = new WebSocket('ws://localhost:10000');
         socket.addEventListener('open', function (event) {
@@ -102,7 +143,8 @@ Question 3
             var ai = document.querySelector('input[name="ai"]:checked').value;
             var story = document.getElementById("story").value;
             var questions = document.getElementById("questions").value;
-            var message = ai + "|" + story + "|" + questions; 
+			var length = document.getElementById("length").innerHTML;
+            var message = ai + "|" + story + "|" + questions + "|" + length; 
             socket.send(message);	
             socket.close()
         });
