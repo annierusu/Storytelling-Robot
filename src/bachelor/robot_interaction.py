@@ -22,9 +22,9 @@ class Robot:
     
     def showEmotion(self, emotion):
         if emotion == sentiment.ANGRY:
-            self.emotion_pub.publish("QT/angry")
+            self.emotion_pub.publish("QT/neutral")
         elif emotion == sentiment.DISGUSTED:
-            self.emotion_pub.publish("QT/disgusted")
+            self.emotion_pub.publish("QT/surprise")
         elif emotion == sentiment.AFRAID:
             self.emotion_pub.publish("QT/afraid")
         elif emotion == sentiment.JOYFUL:

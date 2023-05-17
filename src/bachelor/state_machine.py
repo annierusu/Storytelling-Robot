@@ -7,7 +7,7 @@ import rospy
 import json
 from std_msgs.msg import String
 from qt_nuitrack_app.msg import Gestures
-#import translators as ts
+import translators as ts
 from qt_robot_interface.srv import *
 import story_generation as ai
 from sentiment_analysis import Classifier, sentiment 
@@ -39,7 +39,7 @@ AUTO_SPLIT = True
 classifier = Classifier()
 
 #NO ROBOT SUPPORT: Mock_Robot() 
-robot = Mock_Robot() #Robot()
+robot = Robot() #Robot()
 
 #For the gestures
 state_index = 0
@@ -94,8 +94,8 @@ def config_language():
     global chosen_language
     global language
     #NO ROBOT SUPPORT: comment the two lines below
-    # speechConfig = rospy.ServiceProxy('/qt_robot/speech/config', speech_config)
-    # rospy.wait_for_service('/qt_robot/speech/config')
+    speechConfig = rospy.ServiceProxy('/qt_robot/speech/config', speech_config)
+    rospy.wait_for_service('/qt_robot/speech/config')
 
     chosen_language = int(await_response())
     print("Language chosen: ", chosen_language)
@@ -103,13 +103,13 @@ def config_language():
     print()
     if chosen_language == 2:
         language = 'de'
-        # status = speechConfig("de-DE",0,100) #NO ROBOT SUPPORT: comment this line
+        status = speechConfig("de-DE",0,100) #NO ROBOT SUPPORT: comment this line
     elif chosen_language == 1:
         language = 'fr'
-        # status = speechConfig("fr-FR",0,100) #NO ROBOT SUPPORT: comment this line
+        status = speechConfig("fr-FR",0,100) #NO ROBOT SUPPORT: comment this line
     elif chosen_language == 0: 
         language = 'en'
-        # status = speechConfig("en-US",0,100) #NO ROBOT SUPPORT: comment this line
+        status = speechConfig("en-US",0,100) #NO ROBOT SUPPORT: comment this line
     print("Language chosen: ", language)
     print()
 
@@ -121,7 +121,7 @@ def qt_says(message, to_say = True, speech=robot.say_serv_lips):
     if to_say :
         speech(message) 
     else:
-        print(message,"\n") #TODO: change as needs to be on web
+        print(message,"\n") 
 
 
 #This is the first state of the state machine. It begins the interaction with the robot. 
@@ -135,8 +135,11 @@ class Greetings(smach.State):
         global state_index
 
         robot.playGesture('QT/hi')
-        greetings = "Hi! My name is Q T and we are going to learn new things today, are you ready to go on an adventure?"
+        # greetings = "Hi! My name is Q T and we are going to learn new things today, are you ready to go on an adventure?"
+        # translated =ts.translate_text(greetings, translator='google', from_language='en', to_language=language)
+        greetings = "Salut! Je m'appelle Q T et nous allons apprendre de nouvelles choses aujourd'hui, êtes-vous prêt à partir à l'aventure ?"
         qt_says(greetings)
+        rospy.sleep(0.2)
 
         #Go to storytelling state
         next_global_state = 'nextContent'
@@ -190,6 +193,8 @@ class Storytelling(smach.State):
 
         for sentence in sentences_with_sentiment:
             s = sentiment(sentences_with_sentiment[sentence])
+            # qt_says(sentence)
+            # rospy.sleep(0.2)
             if s == sentiment.NEUTRAL:
                 qt_says(sentence) #speak with lip sync
                 rospy.sleep(0.2)
@@ -238,15 +243,23 @@ class Evaluation(smach.State):
         if questions:
             done_questions = False
             qt_says('Press the down arrow to go to the next question', to_say=False)
-            qt_says('Now that we have finished the story, it is time for your evaluation! How well did you understand the story?')
+            
+            # message = "Now that we have finished the story, it is time for your evaluation! How well did you understand the story?"
+            translated = "Maintenant que nous avons terminé l'histoire, il est temps pour votre évaluation! Dans quelle mesure avez-vous bien compris l'histoire?"
+            qt_says(translated)
+            rospy.sleep(0.2)
             print(questions)
             while not done_questions: #wait for all questions to be said and discussed
                 pass
-                
+            rospy.sleep(0.2)
             robot.showEmotion(sentiment.JOYFUL)
-            qt_says('Thank you for answering my questions!')
+            # message = "Thank you for answering my questions!"
+            translated = "Je vous remercie d'avoir répondu à mes questions!" 
+            qt_says(translated)
+            rospy.sleep(0.2)
 
-        qt_says('Do you want to hear another story ?')
+        # questionStory ='Do you want to hear another story ?'
+        # qt_says(ts.translate_text(questionStory, translator='google', from_language='en', to_language=language) )
 
         print('\n-----------------\n')
         qt_says('press LEFT ARROW to hear another story', to_say=False)
@@ -265,7 +278,9 @@ class Goodbye(smach.State):
 
     def execute(self, userdata):
         robot.showEmotion(sentiment.JOYFUL)
-        qt_says('Thank you for your attention! I hope you learned a lot. See you next time!')
+        # message = "Thank you for your attention! I hope you learned a lot. See you next time!"
+        translated = "Merci pour votre attention! J'espère que vous avez beaucoup appris. À la prochaine!"
+        qt_says(translated)
         return 'finishState'
 
 #webserver funcitons 
