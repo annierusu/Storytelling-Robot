@@ -7,7 +7,6 @@ prompt = "In two sentences, can you explain why flowers are different colors?"
 
 #Generates a response given a prompt using OpenAI's GPT-3 API 
 def generate_response(prompt, system_message = "You are a helpful and friendly assistant.", max_tokens = 500, n = 1):
-    print("\nHELLO FROM AI\n")
     print(prompt)
     print()
     response = openai.ChatCompletion.create(
@@ -26,5 +25,11 @@ def generate_response(prompt, system_message = "You are a helpful and friendly a
 def generate_fake_response(prompt):
     return prompt
 
+sys_mes = """You are a humanoid robot named QT whose job is to help a 5 year old student with any question they have. 
+You can show facial expressions and move your arms, but you cannot walk. Your goal is to simulate human to human conversation."""
+
+def answer_question(prompt, system_message = sys_mes, max_tokens = 200, n = 1):
+    return generate_response(prompt, system_message, max_tokens, n)
+
 if __name__ == '__main__':
-    print(generate_response("pick a number between 1 and 5"))
+    print(answer_question("Can you dance?"))

@@ -7,7 +7,7 @@ import rospy
 import json
 from std_msgs.msg import String
 from qt_nuitrack_app.msg import Gestures
-import translators as ts
+# import translators as ts
 from qt_robot_interface.srv import *
 import story_generation as ai
 from sentiment_analysis import Classifier, sentiment 

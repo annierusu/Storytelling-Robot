@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+ 
+<html lang="en">
+ 
+<head>
+    <meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	<title>QT Robot Story Generator</title>
+
+	<style type="text/css" media="screen">
+		body {font-family:verdana, sans-serif; color:#666; background:#fafafa; padding:20px; text-align:center;}
+		h1 {font-size:16px; font-weight: bold; text-align:center; color: #4167fe;}
+		label {font-size:16px;}
+		button {margin-left:205px; padding:5px; margin-top:5px; font-size:16px;}
+		textarea {width:400px; font-size:16px; font-family: courier, "courier new", monospace; margin:0 0 5px 0; padding:5px; border:1px solid #eee; }
+		select {margin:0 0 5px 0;}
+		::placeholder {color:#d4d2d2;}
+		.slider{
+			width: 400px;
+			height: 30px;
+			background: #d3d3d3;
+			outline: none;
+			opacity: 0.7;
+			-webkit-transition: .2s;
+			transition: opacity .2s;
+		}
+		
+	</style>
+</head>
+ 
+<body>
+    <h1>Ask QT Anything!</h1>
+	<br>
+	
+	<div id="story_input" style="display:block">
+	<form method="post" id="story-form">
+		<!-- Story or prompt to be inputted-->
+	<label for="story-form">Write your questions for QT:</label><br>
+
+		<textarea form="story-form" id="story" cols="40" rows="10" placeholder="What is your name?"></textarea>
+	<br>
+	</form>
+	<br>
+	<p>Click the Submit button for QT to answer your question, or the Clear All button to restart</p>
+	<button type="submit" onclick="sendStoryData()">Submit</button>
+	<button onclick = "clearAll()">Clear All</button>
+	<button onclick="stopServer()">Exit</button>
+	</div>
+</body>
+ 
+<script>
+		function clearAll(){
+		document.getElementById('story-form').reset();
+	}
+
+    const sendStoryData = () => {
+        const socket = new WebSocket('ws://localhost:10000');
+        socket.addEventListener('open', function (event) {
+            var story = document.getElementById("story").value;
+           
+            socket.send(story);	
+            socket.close()
+        });
+    }
+
+    const stopServer = () => {
+        const socket = new WebSocket('ws://localhost:10000');
+        socket.addEventListener('open', function (event) {
+            socket.send("close");
+			//refresh page
+			//window.location.reload();
+			closeWindow();
+            socket.close()
+        });
+    }
+
+	function closeWindow(){
+		window.open('', '_parent','');
+		window.close();
+	}
+ 
+</script>
+ 
+</html>
