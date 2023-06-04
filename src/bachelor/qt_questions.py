@@ -1,7 +1,5 @@
 from pynput.keyboard import Key, Listener
 import rospy
-from std_msgs.msg import String
-from qt_nuitrack_app.msg import Gestures
 from qt_robot_interface.srv import *
 import story_generation as ai
 from sentiment_analysis import Classifier, sentiment 
@@ -27,12 +25,13 @@ end= False
 classifier = Classifier()
 robot = Robot()
 
+AUTO_SPLIT = True
+
 def config_language():
     speechConfig = rospy.ServiceProxy('/qt_robot/speech/config', speech_config)
     rospy.wait_for_service('/qt_robot/speech/config')
-    status = speechConfig("fr-FR",0,100) #NO ROBOT SUPPORT: comment this line
-
-
+    status = speechConfig("fr-FR",0,100) 
+    print("configed language")
 
 #webserver funcitons 
 def await_response():  
@@ -86,34 +85,37 @@ def start_web_module():
 def key_transition(key):
     global end  
     if key == Key.esc:
+        print("esc pressed")
         end = True 
 
 ls = Listener(on_press=key_transition)
 ls.start()
 
 def qt_says(message, speech=robot.say_serv_lips):
-    (speech)(message)
+    speech(message)
 
 def begin_ask_questions():
     global end
-    while(not end):
+    while(not end): #need to press esc before last question... maybe a do while is better 
         local_data = await_response()
         answer = ai.answer_question(local_data)
 
-        sentences_with_sentiment = classifier.classify(answer)
+        sentences_with_sentiment = classifier.classify(answer, AUTO_SPLIT)
 
         for sentence in sentences_with_sentiment:
             s = sentiment(sentences_with_sentiment[sentence])
-            qt_says(sentence)
-            rospy.sleep(0.2)
-            # if s == sentiment.NEUTRAL:
-            #     qt_says(sentence) #speak with lip sync
-            #     rospy.sleep(0.2)
-            # else: 
-            #     robot.showEmotion(s)
-            #     robot.playGesture(s)
-            #     qt_says(sentence, speech=robot.say_serv) #speak without lip sync as showing emotion 
-            #     rospy.sleep(0.2)
+            # qt_says(sentence)
+            # rospy.sleep(0.2)
+            if s == sentiment.NEUTRAL:
+                qt_says(sentence) #speak with lip sync
+                rospy.sleep(0.2)
+            else: 
+                robot.showEmotion(s)
+                robot.playGesture(s)
+                qt_says(sentence, speech=robot.say_serv) #speak without lip sync as showing emotion 
+                rospy.sleep(0.2)
+    print("end of questioning")
+    exit(0)
 
 def main():
     start_web_module()

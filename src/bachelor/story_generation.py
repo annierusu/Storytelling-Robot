@@ -28,7 +28,10 @@ def generate_fake_response(prompt):
 sys_mes = """You are a humanoid robot named QT whose job is to help a 5 year old student with any question they have. 
 You can show facial expressions and move your arms, but you cannot walk. Your goal is to simulate human to human conversation."""
 
-def answer_question(prompt, system_message = sys_mes, max_tokens = 200, n = 1):
+sys_french = """Vous êtes un robot humanoïde nommé QT dont le travail consiste à aider un élève de 5 ans à répondre à toutes ses questions.
+Vous pouvez montrer des expressions faciales et bouger vos bras, mais vous ne pouvez pas marcher. Votre objectif est de simuler une conversation d'homme à homme."""
+
+def answer_question(prompt, system_message = sys_french, max_tokens = 200, n = 1):
     return generate_response(prompt, system_message, max_tokens, n)
 
 if __name__ == '__main__':
