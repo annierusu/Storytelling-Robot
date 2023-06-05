@@ -23,4 +23,4 @@ export ROS_IP=your IP found with ifconfig
 
 export ROS_MASTER_URI=http//192.168.4.1:11311
   
-export OEPNAI_API_KEY=<your OpenAI API key found on your OpenAI account> *this is required to use the story generation feature and the question activity*
+export OEPNAI_API_KEY=your OpenAI API key found on your OpenAI account *this is required to use the story generation feature and the question activity*
