@@ -4,6 +4,7 @@ from std_msgs.msg import String
 
 from sentiment_analysis import sentiment
 
+#This class represents QT robot. It is used to control QT's speech, gestures, and emotions.
 class Robot:
 
     def __init__(self) -> None:
@@ -19,7 +20,7 @@ class Robot:
         
         rospy.sleep(3)
         
-    
+    #Show a given emotion on QT's face
     def showEmotion(self, emotion):
         if emotion == sentiment.ANGRY:
             self.emotion_pub.publish("QT/neutral")
@@ -29,15 +30,13 @@ class Robot:
             self.emotion_pub.publish("QT/afraid")
         elif emotion == sentiment.JOYFUL:
             self.emotion_pub.publish("QT/happy")
-        #elif emotion == sentiment.NEUTRAL:
-            #emotion_pub.publish("QT/neutral")
         elif emotion == sentiment.SAD:
             self.emotion_pub.publish("QT/sad")
         elif emotion == sentiment.SURPRISED:
             self.emotion_pub.publish("QT/surprise")
 
         rospy.loginfo("showed emotion: " + str(emotion))
-
+    #Play a given gesture
     def playGesture(self, gesture):
         if gesture == sentiment.ANGRY:
             self.gesture_pub.publish("QT/emotions/angry")
@@ -47,8 +46,6 @@ class Robot:
             self.gesture_pub.publish("QT/emotions/afraid")
         elif gesture == sentiment.JOYFUL:
             self.gesture_pub.publish("QT/emotions/happy")
-        #elif gesture == sentiment.NEUTRAL:
-            #gesture_pub.publish("QT/neutral")
         elif gesture == sentiment.SAD:
             self.gesture_pub.publish("QT/emotions/sad")
         elif gesture == sentiment.SURPRISED:
@@ -57,11 +54,13 @@ class Robot:
             self.gesture_pub.publish("QT/hi")
 
         rospy.loginfo("played gesture " + str(gesture))
-
+   
+    #Say a given text (publisher)
     def say(self, text):
         self.speech_pub.publish(text)
         rospy.loginfo("Said: " + text)
-
+    
+    #Say a given text (service)
     def say_serv(self, text):
         rospy.loginfo("Speech service saying: " + text)
         rospy.wait_for_service('/qt_robot/speech/say') 

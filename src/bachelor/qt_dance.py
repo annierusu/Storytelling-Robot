@@ -1,38 +1,24 @@
-from pynput.keyboard import Key, Listener
 import rospy
-from qt_robot_interface.srv import *
-import story_generation as ai
-from robot_interaction import Robot
 from mock_robot_interaction import Mock_Robot
 from dance_robot import Dance_Robot
-from dance_robot import feeling
+from dance_robot import dance_move as dm
 
+#QT 
+#NO ROBOT SUPPORT: Mock_Robot()
+dance_robot = Dance_Robot() #Robot()
 
-robot = Dance_Robot()
+dance_moves = [dm.D11, dm.D12, dm.D13, dm.D14, dm.D21, dm.D22, dm.D23, dm.D24]
 
-gestures = [feeling.ANGRY, feeling.JOYFUL, feeling.DISGUSTED, feeling.AFRAID, feeling.JOYFUL, feeling.SURPRISED]
-gesture_index = 0
-
+#Have QT perform a sequence of dance moves. NOTE: If publisher version is being used, a greater time is needed between the gestures (line 19)
 def dance():
-    # robot.playGesture('QT/hi')
-    rospy.sleep(2)
-    robot.playGesture(feeling.JOYFUL)
-    rospy.sleep(7)
-    robot.playGesture(feeling.SURPRISED)
-    rospy.sleep(6)
-    robot.playGesture(feeling.JOYFUL)
-    rospy.sleep(7)
-    robot.playGesture(feeling.ANGRY)
-    # for i in range(len(gestures)):
-    #     # if(i%2 == 0):
-    #     #     robot.showEmotion(feeling.JOYFUL)
-    #     # elif(i%3 == 0):
-    #     #     robot.showEmotion(feeling.SURPRISED)
-    #     robot.playGesture(gestures[i])
-    #     rospy.sleep(4)
-
+    dance_robot.play_gesture_serv('QT/hi') 
+    rospy.sleep(0.1)
+    
+    for dance in dance_moves:
+        dance_robot.play_gesture_serv(dance)
+        rospy.sleep(0.1)
+    
     rospy.spin()
-
 
 if __name__ == '__main__':
     dance()

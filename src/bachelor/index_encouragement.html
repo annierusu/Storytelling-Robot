@@ -48,7 +48,7 @@
 	<br>
 	</form>
 	<br>
-	<p>Step 4: Click the Submit button for QT to give encouragement or the Clear All button to restart</p>
+	<p>Step 2: Click the Submit button for QT to give encouragement or the Clear All button to restart</p>
 	<button type="submit" onclick="sendStoryData()">Submit</button>
 	<button onclick = "clearAll()">Clear All</button>
 	<button onclick="stopServer()">Exit</button>
@@ -74,8 +74,6 @@
         const socket = new WebSocket('ws://localhost:10000');
         socket.addEventListener('open', function (event) {
             socket.send("close");
-			//refresh page
-			//window.location.reload();
 			closeWindow();
             socket.close()
         });

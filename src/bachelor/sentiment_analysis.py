@@ -21,6 +21,7 @@ class Classifier:
   def __init__(self) -> None:
     self.model = pipeline("text-classification", model="j-hartmann/emotion-english-distilroberta-base", top_k=None)
 
+  #Classify a text and return a dictionary with the sentences and the related sentiment
   def classify(self, text, auto_split):
     if auto_split == True:
       print("Splitting text into sentences...")
@@ -85,6 +86,7 @@ class Classifier:
       splitted.append(t)
     return splitted
 
+#debugging purposes
 if __name__ == "__main__":
   test = "\t\thello there"
   print("start")
