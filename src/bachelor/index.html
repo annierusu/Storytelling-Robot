@@ -154,8 +154,6 @@ Question 3
         const socket = new WebSocket('ws://localhost:10000');
         socket.addEventListener('open', function (event) {
             socket.send("close");
-			//refresh page
-			//window.location.reload();
 			closeWindow();
             socket.close()
         });

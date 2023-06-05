@@ -20,7 +20,7 @@ class Robot:
         
         rospy.sleep(3)
         
-    #Show a given emotion on QT's face
+    #Show a given emotion on QT's face (publisher)
     def showEmotion(self, emotion):
         if emotion == sentiment.ANGRY:
             self.emotion_pub.publish("QT/neutral")
@@ -35,8 +35,9 @@ class Robot:
         elif emotion == sentiment.SURPRISED:
             self.emotion_pub.publish("QT/surprise")
 
-        rospy.loginfo("showed emotion: " + str(emotion))
-    #Play a given gesture
+        rospy.loginfo("Showed emotion: " + str(emotion))
+    
+    #Play a given gesture (publisher)
     def playGesture(self, gesture):
         if gesture == sentiment.ANGRY:
             self.gesture_pub.publish("QT/emotions/angry")
@@ -53,7 +54,7 @@ class Robot:
         elif gesture == 'QT/hi':
             self.gesture_pub.publish("QT/hi")
 
-        rospy.loginfo("played gesture " + str(gesture))
+        rospy.loginfo("Played gesture " + str(gesture))
    
     #Say a given text (publisher)
     def say(self, text):
@@ -66,7 +67,8 @@ class Robot:
         rospy.wait_for_service('/qt_robot/speech/say') 
         rospy.wait_for_service('/qt_robot/behavior/talkText') 
         self.speech_serv(text)
-
+   
+    #Say a given text with lip-sync (service)
     def say_serv_lips(self, text):
         rospy.loginfo("Speech service saying with lip-sync: " + text)
         rospy.wait_for_service('/qt_robot/behavior/talkText')
