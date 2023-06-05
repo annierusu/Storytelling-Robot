@@ -2,8 +2,6 @@
 from pynput.keyboard import Key, Listener
 import smach
 import rospy
-from std_msgs.msg import String
-import translators as ts
 from qt_robot_interface.srv import *
 import story_generation as ai
 from sentiment_analysis import Classifier, sentiment 

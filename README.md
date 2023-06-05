@@ -33,9 +33,9 @@ pynput==1.7.6
 rospy==1.16.0  
 smach==2.5.1  
 smach_ros==2.5.1  
-translators==5.6.1  
 transformers==4.27.1   
 websockets==11.0.1  
+
 
 ## Running the programs:  
 There are 4 runnable programs: 
