@@ -19,7 +19,7 @@ source /opt/ros/noetic/setup.bash
 
 source ~/catkin_ws/devel/setup.bash
 
-export ROS_IP=<your IP found with ifconfig>
+export ROS_IP=your IP found with ifconfig
 
 export ROS_MASTER_URI=http//192.168.4.1:11311
   
