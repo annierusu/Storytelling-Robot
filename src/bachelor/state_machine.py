@@ -12,7 +12,7 @@ import server
 
 #QT 
 #NO ROBOT SUPPORT: Mock_Robot()
-robot = Mock_Robot() #Robot()
+robot = Robot() #Robot()
 SPEECH_NEUTRAL = True
 
 #For web module
@@ -72,19 +72,19 @@ def config_language():
     global language
 
     #NO ROBOT SUPPORT: comment the two lines below
-    # speechConfig = rospy.ServiceProxy('/qt_robot/speech/config', speech_config)
-    # rospy.wait_for_service('/qt_robot/speech/config')
+    speechConfig = rospy.ServiceProxy('/qt_robot/speech/config', speech_config)
+    rospy.wait_for_service('/qt_robot/speech/config')
 
     chosen_language = int(server.await_response())
     if chosen_language == 2:
         language = 'de'
-        # status = speechConfig("de-DE",0,100) #NO ROBOT SUPPORT: comment this line
+        status = speechConfig("de-DE",0,100) #NO ROBOT SUPPORT: comment this line
     elif chosen_language == 1:
         language = 'fr'
-        # status = speechConfig("fr-FR",0,100) #NO ROBOT SUPPORT: comment this line
+        status = speechConfig("fr-FR",0,100) #NO ROBOT SUPPORT: comment this line
     elif chosen_language == 0: 
         language = 'en'
-        # status = speechConfig("en-US",0,100) #NO ROBOT SUPPORT: comment this line
+        status = speechConfig("en-US",0,100) #NO ROBOT SUPPORT: comment this line
     print("Language chosen: ", language)
     print()
 
