@@ -12,7 +12,7 @@ import server
 
 #QT 
 #NO ROBOT SUPPORT: Mock_Robot()
-robot = Robot() #Robot()
+robot = Mock_Robot() #Robot()
 SPEECH_NEUTRAL = True
 
 #For web module
@@ -72,19 +72,19 @@ def config_language():
     global language
 
     #NO ROBOT SUPPORT: comment the two lines below
-    speechConfig = rospy.ServiceProxy('/qt_robot/speech/config', speech_config)
-    rospy.wait_for_service('/qt_robot/speech/config')
+    # speechConfig = rospy.ServiceProxy('/qt_robot/speech/config', speech_config)
+    # rospy.wait_for_service('/qt_robot/speech/config')
 
     chosen_language = int(server.await_response())
     if chosen_language == 2:
         language = 'de'
-        status = speechConfig("de-DE",0,100) #NO ROBOT SUPPORT: comment this line
+        # status = speechConfig("de-DE",0,100) #NO ROBOT SUPPORT: comment this line
     elif chosen_language == 1:
         language = 'fr'
-        status = speechConfig("fr-FR",0,100) #NO ROBOT SUPPORT: comment this line
+        # status = speechConfig("fr-FR",0,100) #NO ROBOT SUPPORT: comment this line
     elif chosen_language == 0: 
         language = 'en'
-        status = speechConfig("en-US",0,100) #NO ROBOT SUPPORT: comment this line
+        # status = speechConfig("en-US",0,100) #NO ROBOT SUPPORT: comment this line
     print("Language chosen: ", language)
     print()
 
@@ -148,12 +148,12 @@ class Storytelling(smach.State):
 
         level_1_prompt = "Make the following text into a story, understandable by a 5 year old, using characters and dialogue: "
         level_2_prompt_a = "Write a story about "
-        level_2_prompt_b = ", understandable by a 5 year old, using characters and dialogue, taking it step by step."
+        level_2_prompt_b = ", understandable by a 5 year old, using characters and dialogue, taking it step by step"
         
         if(ai_level == 1):
-            story_prompt = ai.generate_response(ai.translate(level_1_prompt, language_to = language)+ story_prompt, max_tokens=story_length)
+            story_prompt = ai.generate_response(ai.translate(level_1_prompt, language_to = language)+ story_prompt + ", under " + str(story_length) + " words.")
         elif(ai_level == 2):
-            story_prompt = ai.generate_response(ai.translate(level_2_prompt_a, language_to=language)+ story_prompt + ai.translate(level_2_prompt_b, language_to = language), max_tokens=story_length)
+            story_prompt = ai.generate_response(ai.translate(level_2_prompt_a, language_to=language)+ story_prompt + ai.translate(level_2_prompt_b, language_to = language)+ ", under " + str(story_length)+ " words.")
 
         sentences_with_sentiment = classifier.classify(story_prompt, AUTO_SPLIT)
 

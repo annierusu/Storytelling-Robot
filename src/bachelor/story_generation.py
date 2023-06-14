@@ -4,7 +4,7 @@ openai.api_key=os.getenv("OPENAI_API_KEY") #please follow the instructions on Op
 MODEL = "gpt-3.5-turbo"
 
 #Generates a response given a prompt using OpenAI's GPT-3 API 
-def generate_response(prompt, system_message = "You are a helpful and friendly assistant.", max_tokens = 500, n = 1):
+def generate_response(prompt, system_message = "You are a helpful and friendly assistant.", max_tokens = 1000, n = 1):
     print(prompt)
     print()
     response = openai.ChatCompletion.create(
