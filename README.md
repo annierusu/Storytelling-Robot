@@ -3,10 +3,18 @@ EPFL bachelor project spring 2023
 
 QT is an expressive humanoid social robot developed by LuxAI. He is used to provide encouragement and motivation through storytelling to students. 
 
+## Repository Structure: ##
+**build, devel, install:** these are directories for ROS functionality, no need to manually modify them. 
+
+**src:** contains the source code and story text files.
+
+**research:** contains documents of the stages of the participatory design process and user study. 
+
 ## How to use this project on Oracle VM VirtualBox: 
 
 **Setting up the network of the VM:**  
-When not connected to the robot: use NAT network. 
+
+When *not* connected to the robot: use NAT network. 
 >Modifications in the code are required: see NO ROBOT SUPPORT comments for more details 
 
 When connected to the robot: if the robot has no wifi itself, use wifi dongle and use NAT on Adapter 1 (connect wifi to epfl network), Bridged adapter on Adapter 2 (TP-Link) (connect wifi2 to QT)
